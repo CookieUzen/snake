@@ -43,15 +43,37 @@
 // Array to store snake position
 // snake[number on grid][time to live]
 int snake[WIDTH*HEIGHT][2];	// TODO: dynamically allocated snake instead of setting hard value
+int snakeHead;
 
 void initGrid();
 void initNcurses();
+void printSnake();
+void initSnake();
 int coordinateToX(int input);
 int coordinateToY(int input);
 
 int	main () {
+	// init
 	initNcurses();
 	initGrid();
+	initSnake();
+
+	// debug
+	snake[0][0] = 50;
+	snake[1][0] = 51;
+	snake[2][0] = 52;
+	snake[3][0] = 53;
+
+	// Set snakeHead to last element in snake[][]
+	for (int i = 0; i < sizeof(snake)/sizeof(snake[0]); i++) {
+		if ( snake[i][0] != -1 )
+			continue;
+
+		snakeHead = snake[i-1][0];
+		break;
+	}
+
+	printSnake();
 	
 	getch();
 
@@ -59,8 +81,32 @@ int	main () {
 	return(0);
 }
 
+// Print snake on grid
+void printSnake () {
+	attron(COLOR_PAIR(1));
+	for (int i = 0; i < sizeof(snake)/sizeof(snake[0]); i++) {
+		// Don't print if snake does not exsist -1
+		if ( snake[i][0] == -1 )
+			continue;
 
+		mvprintw(coordinateToY(snake[i][0])+1,coordinateToX(snake[i][0])*2+1,"  ");
+	}
 
+	attron(COLOR_PAIR(2));
+	mvprintw(coordinateToY(snakeHead)+1,coordinateToX(snakeHead)*2+1,"  ");
+
+	attroff(COLOR_PAIR(2));
+}
+
+// Initialize Snake
+void initSnake () {
+	for (int i = 0; i < sizeof(snake)/sizeof(snake[0]); i++) {
+		snake[i][0] = -1;
+		snake[i][1] = -1;
+	}
+}
+
+// Initialize ncurses
 void initNcurses () {
 	initscr();
 	cbreak();
@@ -74,7 +120,8 @@ void initGrid () {
 	// Enable Color
 	start_color();
 	init_pair(1, COLOR_BLACK, COLOR_CYAN);	// Snake color
-	init_pair(2, COLOR_BLACK, COLOR_RED);	// Apple color
+	init_pair(2, COLOR_BLACK, COLOR_GREEN);	// Snake head color
+	init_pair(3, COLOR_BLACK, COLOR_RED);	// Apple color
 
 	// Print top and bottom bars
 	move(0,0);
@@ -83,17 +130,17 @@ void initGrid () {
 		printw("-");
 	printw("+");
 
-	move(HEIGHT,0);
+	move(HEIGHT+1,0);
 	printw("+");
 	for (int i = 0; i < WIDTH*2; i++)
 		printw("-");
 	printw("+");
 
 	// Print sidebars
-	for (int i = 1; i < HEIGHT; i++)
+	for (int i = 1; i < HEIGHT+1; i++)
 		mvprintw(i,0,"|");
 
-	for (int i = 1; i < HEIGHT; i++)
+	for (int i = 1; i < HEIGHT+1; i++)
 		mvprintw(i,WIDTH*2+1,"|");
 
 }
@@ -107,4 +154,3 @@ int coordinateToX ( int input ) {
 int coordinateToY ( int input ) {
 	return input/HEIGHT;
 }
-
