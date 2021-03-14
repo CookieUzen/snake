@@ -56,9 +56,8 @@ def coordinateToGrid(x,y):
 def addLength(gridInput):
     """Add new head of snake"""
 
-    # check if gridInput out of bounds
-    if gridToX(gridInput) > WIDTH or gridToY(gridInput) > HEIGHT:
-        return 0
+    if checkSnake(gridInput) or checkEdge(gridToX(gridInput),gridToY(gridInput)):
+        return False
 
     # Append to snake
     snake.insert(0,[gridInput,snakeLength])
@@ -113,7 +112,22 @@ def printSnake():
     # print snake tail
     for i in range(1,len(snake)):
         screen.addstr(gridToY(snake[i][0])+1,gridToX(snake[i][0])*2+1,"  ",curses.color_pair(2))
+
+# have to use x/y input, as gridInput is always in the playing field
+def checkEdge(x,y):
+    """check if snake hits edge of screen"""
+    if x > WIDTH or y > HEIGHT:
+        return True
     
+    return False
+
+def checkSnake(gridInput):
+    """check if the snake hits itself"""
+    for i in range(len(snake)):
+        if snake[i][0] == gridInput:
+            return True
+
+    return False
 
 # Start curses
 initCurses()
@@ -122,6 +136,7 @@ printGrid()
 
 addLength(0)
 addLength(1)
+addLength(2)
 
 printSnake()
 
