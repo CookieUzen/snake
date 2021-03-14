@@ -1,7 +1,8 @@
 import curses
+import random
 
-WIDTH = 10
-HEIGHT = 10
+WIDTH = 4
+HEIGHT = 4
 
 # The playing field is calculated using the grid below
 # This way, we do not have to create an array to store 
@@ -39,7 +40,10 @@ HEIGHT = 10
 # Define main snake list
 # snake[length][position/ttl]
 snake = []
-snakeLength = 4
+snakeLength = 15
+
+# Define array for storing apples
+apple = []
 
 def gridToX(gridInput):
     """Return x grid from grid grids"""
@@ -66,7 +70,7 @@ def addLength(gridInput):
     for i in range(len(snake)):
         snake[i][1] -= 1
         
-        if snake[i][1] <= 0:
+        if snake[i][1] < 0:
             snake.pop(i)
 
 def printGrid():
@@ -96,7 +100,7 @@ def initCurses():
     curses.start_color()
     curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_CYAN)
     curses.init_pair(2, curses.COLOR_BLACK, curses.COLOR_GREEN)
-    curses.init_pair(3, curses.COLOR_BLACK, curses.COLOR_RED)
+    curses.init_pair(3, curses.COLOR_RED, curses.COLOR_BLACK)
 
 def endCurses():
     """ends curses"""
@@ -116,7 +120,7 @@ def printSnake():
 # have to use x/y input, as gridInput is always in the playing field
 def checkEdge(x,y):
     """check if snake hits edge of screen"""
-    if x > WIDTH or y > HEIGHT:
+    if x > WIDTH or y > HEIGHT-1:
         return True
     
     return False
@@ -129,16 +133,31 @@ def checkSnake(gridInput):
 
     return False
 
+def generateApple():
+    """generate an apple in the grid"""
+    output = random.randint(0,HEIGHT*HEIGHT-1)
+    if checkSnake(output):
+        generateApple()
+        return
+
+    apple.append(output)
+
+def printApple():
+    """print location of Apple"""
+    for i in range(len(apple)):
+        screen.addstr(gridToY(apple[i])+1,gridToX(apple[i])*2+1,"()",curses.color_pair(3))
+
 # Start curses
 initCurses()
 
 printGrid()
 
-addLength(0)
-addLength(1)
-addLength(2)
+for i in range(15):
+    addLength(i)
 
 printSnake()
+generateApple()
+printApple()
 
 screen.getch()
 
