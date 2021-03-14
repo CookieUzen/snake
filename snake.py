@@ -1,8 +1,8 @@
 import curses
 import random
 
-WIDTH = 4
-HEIGHT = 4
+WIDTH = 10
+HEIGHT = 10
 
 # The playing field is calculated using the grid below
 # This way, we do not have to create an array to store 
@@ -40,7 +40,7 @@ HEIGHT = 4
 # Define main snake list
 # snake[length][position/ttl]
 snake = []
-snakeLength = 15
+snakeLength = 3
 
 # Define array for storing apples
 apple = []
@@ -147,16 +147,34 @@ def printApple():
     for i in range(len(apple)):
         screen.addstr(gridToY(apple[i])+1,gridToX(apple[i])*2+1,"()",curses.color_pair(3))
 
+def checkApple():
+    """check if apple's been eaten"""
+    for i in range(len(apple)):
+        if apple[i] == snake[0][0]:
+            apple.pop(i)
+            global snakeLength
+            snakeLength += 1
+
 # Start curses
 initCurses()
 
+apple.append(3)
+
+addLength(0)
+addLength(1)
+addLength(2)
+
 printGrid()
-
-for i in range(15):
-    addLength(i)
-
 printSnake()
-generateApple()
+printApple()
+
+screen.getch()
+screen.clear()
+addLength(3)
+checkApple()
+
+printGrid()
+printSnake()
 printApple()
 
 screen.getch()
