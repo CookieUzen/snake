@@ -40,10 +40,18 @@ HEIGHT = 4
 # Define main snake list
 # snake[length][position/ttl]
 snake = []
-snakeLength = 15
+snakeLength = 3
+
+# Define cursor for controlling snake
+cursorX = 0
+cursorY = 0
+cursorRotation = 0
 
 # Define array for storing apples
 apple = []
+
+# If game is over
+gameEnd = False
 
 def gridToX(gridInput):
     """Return x grid from grid grids"""
@@ -57,10 +65,11 @@ def coordinateToGrid(x,y):
     """Return grid from x y coordinates"""
     return y*WIDTH + x
 
-def addLength(gridInput):
+def addLength(x,y):
     """Add new head of snake"""
 
-    if checkSnake(gridInput) or checkEdge(gridToX(gridInput),gridToY(gridInput)):
+    gridInput = coordinateToGrid(x,y)
+    if checkSnake(gridInput or checkEdge(x,y)):
         return False
 
     # Append to snake
@@ -147,19 +156,50 @@ def printApple():
     for i in range(len(apple)):
         screen.addstr(gridToY(apple[i])+1,gridToX(apple[i])*2+1,"()",curses.color_pair(3))
 
+def moveSnake(x,y):
+    """moves the snake"""
+    if not( checkSnake(coordinateToGrid(x,y)) or checkEdge(x,y) ):
+        global cursorX
+        global cursorY
+        cursorX += x
+        cursorY += y
+    else: 
+        global gameEnd
+        gameEnd = True
+
+def printScr():
+    """Update Screen"""
+    screen.clear()
+    printGrid()
+    printSnake()
+    printApple()
+
 # Start curses
 initCurses()
 
-printGrid()
-
-for i in range(15):
-    addLength(i)
-
-printSnake()
+addLength(cursorX,cursorY)
 generateApple()
-printApple()
+
+printScr()
+
+ch = chr(screen.getch())
+
+if ch == 'w':
+    moveSnake(0,-1)
+elif ch == 's':
+    moveSnake(0,1)
+elif ch == 'a':
+    moveSnake(-1,0)
+elif ch == 'd':
+    moveSnake(1,0)
+
+addLength(cursorX,cursorY)
+
+printScr()
 
 screen.getch()
 
 # End curses
 endCurses()
+
+print(str(cursorX) + " " + str(cursorY))
