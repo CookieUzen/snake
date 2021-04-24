@@ -5,11 +5,11 @@ WIDTH = 10
 HEIGHT = 10
 
 # The playing field is calculated using the grid below
-# This way, we do not have to create an array to store 
+# This way, we do not have to create an array to store
 # the entirety of the playing field, but just where the
 # snake occupies space.
 #
-# For example, the index of a 4 by 4 playing field is 
+# For example, the index of a 4 by 4 playing field is
 # listed below.
 # +-----------+
 # |0 |1 |2 |3 |
@@ -45,47 +45,52 @@ snakeLength = 3
 # Define array for storing apples
 apple = []
 
+
 def gridToX(gridInput):
     """Return x grid from grid grids"""
     return gridInput % WIDTH
-    
+
+
 def gridToY(gridInput):
     """Return x grid from grid grids"""
     return gridInput // HEIGHT
 
-def coordinateToGrid(x,y):
+
+def coordinateToGrid(x, y):
     """Return grid from x y coordinates"""
     return y*WIDTH + x
 
+
 def addLength(gridInput):
     """Add new head of snake"""
-
-    if checkSnake(gridInput) or checkEdge(gridToX(gridInput),gridToY(gridInput)):
+    if checkSnake(gridInput) or checkEdge(gridToX(gridInput), gridToY(gridInput)):
         return False
 
     # Append to snake
-    snake.insert(0,[gridInput,snakeLength])
+    snake.insert(0, [gridInput, snakeLength])
 
     # Remove tail of snake
     for i in range(len(snake)):
         snake[i][1] -= 1
-        
+
         if snake[i][1] < 0:
             snake.pop(i)
+
 
 def printGrid():
     """print the playing field"""
 
     # Print top and bottom bars
     screen.clear()
-    screen.addstr(0,0,"+"+"-"*(WIDTH*2)+"+")
-    screen.addstr(HEIGHT+1,0,"+"+"-"*(WIDTH*2)+"+")
+    screen.addstr(0, 0, "+"+"-"*(WIDTH*2)+"+")
+    screen.addstr(HEIGHT+1, 0, "+"+"-"*(WIDTH*2)+"+")
 
-    for i in range(1,HEIGHT+1):
-        screen.addstr(i,0,"|")
+    for i in range(1, HEIGHT+1):
+        screen.addstr(i, 0, "|")
 
-    for i in range(1,HEIGHT+1):
-        screen.addstr(i,WIDTH*2+1,"|")
+    for i in range(1, HEIGHT+1):
+        screen.addstr(i, WIDTH*2+1, "|")
+
 
 def initCurses():
     """start curses"""
@@ -102,28 +107,32 @@ def initCurses():
     curses.init_pair(2, curses.COLOR_BLACK, curses.COLOR_GREEN)
     curses.init_pair(3, curses.COLOR_RED, curses.COLOR_BLACK)
 
+
 def endCurses():
     """ends curses"""
     curses.curs_set(1)
     curses.endwin()
 
+
 def printSnake():
     """print the snake on the playing field"""
 
     # print snake head
-    screen.addstr(gridToY(snake[0][0])+1,gridToX(snake[0][0])*2+1,"[]",curses.color_pair(1))
+    screen.addstr(gridToY(snake[0][0])+1, gridToX(snake[0][0])*2+1, "[]", curses.color_pair(1))
 
     # print snake tail
-    for i in range(1,len(snake)):
-        screen.addstr(gridToY(snake[i][0])+1,gridToX(snake[i][0])*2+1,"  ",curses.color_pair(2))
+    for i in range(1, len(snake)):
+        screen.addstr(gridToY(snake[i][0])+1, gridToX(snake[i][0])*2+1, "  ", curses.color_pair(2))
 
-# have to use x/y input, as gridInput is always in the playing field
-def checkEdge(x,y):
+
+# have to use x/y input,  as gridInput is always in the playing field
+def checkEdge(x, y):
     """check if snake hits edge of screen"""
     if x > WIDTH or y > HEIGHT-1:
         return True
-    
+
     return False
+
 
 def checkSnake(gridInput):
     """check if the snake hits itself"""
@@ -133,19 +142,22 @@ def checkSnake(gridInput):
 
     return False
 
+
 def generateApple():
     """generate an apple in the grid"""
-    output = random.randint(0,HEIGHT*HEIGHT-1)
+    output = random.randint(0, HEIGHT*HEIGHT-1)
     if checkSnake(output):
         generateApple()
         return
 
     apple.append(output)
 
+
 def printApple():
     """print location of Apple"""
     for i in range(len(apple)):
-        screen.addstr(gridToY(apple[i])+1,gridToX(apple[i])*2+1,"()",curses.color_pair(3))
+        screen.addstr(gridToY(apple[i])+1, gridToX(apple[i])*2+1, "()", curses.color_pair(3))
+
 
 def checkApple():
     """check if apple's been eaten"""
@@ -154,6 +166,7 @@ def checkApple():
             apple.pop(i)
             global snakeLength
             snakeLength += 1
+
 
 # Start curses
 initCurses()
