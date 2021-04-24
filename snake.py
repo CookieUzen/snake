@@ -174,6 +174,16 @@ def printScr():
     printSnake()
     printApple()
 
+def eatApple():
+    """Check if apple has been eaten by snake"""
+    global cursorX 
+    global cursorY
+    global snakeLength
+    for i in range(len(apple)):
+        if apple[i] == coordinateToGrid(cursorX,cursorY):
+            apple.pop(i)
+            snakeLength += 1
+
 # Start curses
 initCurses()
 
@@ -182,22 +192,22 @@ generateApple()
 
 printScr()
 
-ch = chr(screen.getch())
+while gameEnd == False:
+    ch = chr(screen.getch())
 
-if ch == 'w':
-    moveSnake(0,-1)
-elif ch == 's':
-    moveSnake(0,1)
-elif ch == 'a':
-    moveSnake(-1,0)
-elif ch == 'd':
-    moveSnake(1,0)
+    if ch == 'w':
+        moveSnake(0,-1)
+    elif ch == 's':
+        moveSnake(0,1)
+    elif ch == 'a':
+        moveSnake(-1,0)
+    elif ch == 'd':
+        moveSnake(1,0)
 
-addLength(cursorX,cursorY)
+    eatApple()
+    addLength(cursorX,cursorY)
 
-printScr()
-
-screen.getch()
+    printScr()
 
 # End curses
 endCurses()
