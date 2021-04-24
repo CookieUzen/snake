@@ -40,7 +40,7 @@ HEIGHT = 4
 # Define main snake list
 # snake[length][position/ttl]
 snake = []
-snakeLength = 3
+snakeLength = 5
 
 # Define cursor for controlling snake
 cursorX = 0
@@ -73,8 +73,6 @@ def addLength(x, y):
     """Add new head of snake"""
 
     gridInput = coordinateToGrid(x, y)
-    if checkSnake(gridInput or checkEdge(x, y)):
-        return False
 
     # Append to snake
     snake.insert(0, [gridInput, snakeLength])
@@ -135,10 +133,10 @@ def printSnake():
         screen.addstr(gridToY(snake[i][0])+1, gridToX(snake[i][0])*2+1, "  ", curses.color_pair(2))
 
 
-# have to use x/y input,  as gridInput is always in the playing field
+# have to use x/y input, as gridInput is always in the playing field
 def checkEdge(x, y):
     """check if snake hits edge of screen"""
-    if x > WIDTH or y > HEIGHT-1:
+    if x < 0 or x > WIDTH-1 or y < 0 or y > HEIGHT-1:
         return True
 
     return False
@@ -171,14 +169,22 @@ def printApple():
 
 def moveSnake(x, y):
     """moves the snake"""
-    if not(checkSnake(coordinateToGrid(x, y)) or checkEdge(x, y)):
-        global cursorX
-        global cursorY
-        cursorX += x
-        cursorY += y
-    else: 
-        global gameEnd
+    global cursorX
+    global cursorY
+    cursorX += x
+    cursorY += y
+
+    global error
+    global gameEnd
+
+    if checkSnake(coordinateToGrid(cursorX, cursorY)):
+        error = "checkSnake"
         gameEnd = True
+    elif checkEdge(cursorX, cursorY):
+        error = "checkEdge"
+        gameEnd = True
+
+    addLength(cursorX, cursorY)
 
 
 def printScr():
@@ -219,9 +225,10 @@ while gameEnd is False:
         moveSnake(-1, 0)
     elif ch == 'd':
         moveSnake(1, 0)
+    elif ch == 'q':
+        break
 
     eatApple()
-    addLength(cursorX, cursorY)
 
     printScr()
 
@@ -229,3 +236,6 @@ while gameEnd is False:
 endCurses()
 
 print(str(cursorX) + " " + str(cursorY))
+print(coordinateToGrid(cursorX, cursorY))
+print(snake)
+print(error)
