@@ -56,12 +56,14 @@ gameEnd = False
 def gridToX(gridInput):
     """Return x grid from grid grids"""
     return gridInput % WIDTH
-    
+
+
 def gridToY(gridInput):
     """Return x grid from grid grids"""
     return gridInput // HEIGHT
 
-def coordinateToGrid(x,y):
+
+def coordinateToGrid(x, y):
     """Return grid from x y coordinates"""
     return y*WIDTH + x
 
@@ -73,28 +75,30 @@ def addLength(x,y):
         return False
 
     # Append to snake
-    snake.insert(0,[gridInput,snakeLength])
+    snake.insert(0, [gridInput, snakeLength])
 
     # Remove tail of snake
     for i in range(len(snake)):
         snake[i][1] -= 1
-        
+
         if snake[i][1] < 0:
             snake.pop(i)
+
 
 def printGrid():
     """print the playing field"""
 
     # Print top and bottom bars
     screen.clear()
-    screen.addstr(0,0,"+"+"-"*(WIDTH*2)+"+")
-    screen.addstr(HEIGHT+1,0,"+"+"-"*(WIDTH*2)+"+")
+    screen.addstr(0, 0, "+"+"-"*(WIDTH*2)+"+")
+    screen.addstr(HEIGHT+1, 0, "+"+"-"*(WIDTH*2)+"+")
 
-    for i in range(1,HEIGHT+1):
-        screen.addstr(i,0,"|")
+    for i in range(1, HEIGHT+1):
+        screen.addstr(i, 0, "|")
 
-    for i in range(1,HEIGHT+1):
-        screen.addstr(i,WIDTH*2+1,"|")
+    for i in range(1, HEIGHT+1):
+        screen.addstr(i, WIDTH*2+1, "|")
+
 
 def initCurses():
     """start curses"""
@@ -111,28 +115,32 @@ def initCurses():
     curses.init_pair(2, curses.COLOR_BLACK, curses.COLOR_GREEN)
     curses.init_pair(3, curses.COLOR_RED, curses.COLOR_BLACK)
 
+
 def endCurses():
     """ends curses"""
     curses.curs_set(1)
     curses.endwin()
 
+
 def printSnake():
     """print the snake on the playing field"""
 
     # print snake head
-    screen.addstr(gridToY(snake[0][0])+1,gridToX(snake[0][0])*2+1,"[]",curses.color_pair(1))
+    screen.addstr(gridToY(snake[0][0])+1, gridToX(snake[0][0])*2+1, "[]", curses.color_pair(1))
 
     # print snake tail
-    for i in range(1,len(snake)):
-        screen.addstr(gridToY(snake[i][0])+1,gridToX(snake[i][0])*2+1,"  ",curses.color_pair(2))
+    for i in range(1, len(snake)):
+        screen.addstr(gridToY(snake[i][0])+1, gridToX(snake[i][0])*2+1, "  ", curses.color_pair(2))
 
-# have to use x/y input, as gridInput is always in the playing field
-def checkEdge(x,y):
+
+# have to use x/y input,  as gridInput is always in the playing field
+def checkEdge(x, y):
     """check if snake hits edge of screen"""
     if x > WIDTH or y > HEIGHT-1:
         return True
-    
+
     return False
+
 
 def checkSnake(gridInput):
     """check if the snake hits itself"""
@@ -142,19 +150,21 @@ def checkSnake(gridInput):
 
     return False
 
+
 def generateApple():
     """generate an apple in the grid"""
-    output = random.randint(0,HEIGHT*HEIGHT-1)
+    output = random.randint(0, HEIGHT*HEIGHT-1)
     if checkSnake(output):
         generateApple()
         return
 
     apple.append(output)
 
+
 def printApple():
     """print location of Apple"""
     for i in range(len(apple)):
-        screen.addstr(gridToY(apple[i])+1,gridToX(apple[i])*2+1,"()",curses.color_pair(3))
+        screen.addstr(gridToY(apple[i])+1, gridToX(apple[i])*2+1, "()", curses.color_pair(3))
 
 def moveSnake(x,y):
     """moves the snake"""
