@@ -53,6 +53,7 @@ apple = []
 # If game is over
 gameEnd = False
 
+
 def gridToX(gridInput):
     """Return x grid from grid grids"""
     return gridInput % WIDTH
@@ -67,11 +68,12 @@ def coordinateToGrid(x, y):
     """Return grid from x y coordinates"""
     return y*WIDTH + x
 
-def addLength(x,y):
+
+def addLength(x, y):
     """Add new head of snake"""
 
-    gridInput = coordinateToGrid(x,y)
-    if checkSnake(gridInput or checkEdge(x,y)):
+    gridInput = coordinateToGrid(x, y)
+    if checkSnake(gridInput or checkEdge(x, y)):
         return False
 
     # Append to snake
@@ -166,9 +168,10 @@ def printApple():
     for i in range(len(apple)):
         screen.addstr(gridToY(apple[i])+1, gridToX(apple[i])*2+1, "()", curses.color_pair(3))
 
-def moveSnake(x,y):
+
+def moveSnake(x, y):
     """moves the snake"""
-    if not( checkSnake(coordinateToGrid(x,y)) or checkEdge(x,y) ):
+    if not(checkSnake(coordinateToGrid(x, y)) or checkEdge(x, y)):
         global cursorX
         global cursorY
         cursorX += x
@@ -177,6 +180,7 @@ def moveSnake(x,y):
         global gameEnd
         gameEnd = True
 
+
 def printScr():
     """Update Screen"""
     screen.clear()
@@ -184,38 +188,40 @@ def printScr():
     printSnake()
     printApple()
 
+
 def eatApple():
     """Check if apple has been eaten by snake"""
     global cursorX 
     global cursorY
     global snakeLength
     for i in range(len(apple)):
-        if apple[i] == coordinateToGrid(cursorX,cursorY):
+        if apple[i] == coordinateToGrid(cursorX, cursorY):
             apple.pop(i)
             snakeLength += 1
+
 
 # Start curses
 initCurses()
 
-addLength(cursorX,cursorY)
+addLength(cursorX, cursorY)
 generateApple()
 
 printScr()
 
-while gameEnd == False:
+while gameEnd is False:
     ch = chr(screen.getch())
 
     if ch == 'w':
-        moveSnake(0,-1)
+        moveSnake(0, -1)
     elif ch == 's':
-        moveSnake(0,1)
+        moveSnake(0, 1)
     elif ch == 'a':
-        moveSnake(-1,0)
+        moveSnake(-1, 0)
     elif ch == 'd':
-        moveSnake(1,0)
+        moveSnake(1, 0)
 
     eatApple()
-    addLength(cursorX,cursorY)
+    addLength(cursorX, cursorY)
 
     printScr()
 
