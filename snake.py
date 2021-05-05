@@ -1,8 +1,9 @@
 import curses
 import random
+import math
 
-WIDTH = 4
-HEIGHT = 4
+WIDTH = 10
+HEIGHT = 10
 
 # The playing field is calculated using the grid below
 # This way, we do not have to create an array to store 
@@ -154,6 +155,10 @@ def checkSnake(gridInput):
 def generateApple():
     """generate an apple in the grid"""
     output = random.randint(0, HEIGHT*HEIGHT-1)
+
+    if len(apple) >= math.isqrt(HEIGHT*WIDTH):
+        return
+
     if checkSnake(output):
         generateApple()
         return
@@ -200,19 +205,21 @@ def eatApple():
     global cursorX 
     global cursorY
     global snakeLength
+
     for i in range(len(apple)):
         if apple[i] == coordinateToGrid(cursorX, cursorY):
             apple.pop(i)
             snakeLength += 1
+            break;
 
 
 # Start curses
 initCurses()
 
 addLength(cursorX, cursorY)
-generateApple()
-
 printScr()
+
+count = 1
 
 while gameEnd is False:
     ch = chr(screen.getch())
@@ -232,6 +239,12 @@ while gameEnd is False:
 
     printScr()
 
+    if count == 0:
+        count = math.isqrt(HEIGHT*WIDTH)*2//3
+        generateApple()
+    else: 
+        count -= 1
+
 # End curses
 endCurses()
 
@@ -239,3 +252,4 @@ print(str(cursorX) + " " + str(cursorY))
 print(coordinateToGrid(cursorX, cursorY))
 print(snake)
 print(error)
+print(apple)
